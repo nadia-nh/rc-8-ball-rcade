@@ -1,70 +1,91 @@
-import p5 from "p5";
-import { PLAYER_1, SYSTEM } from "@rcade/plugin-input-classic";
+import { on } from "@rcade/plugin-input-classic";
 
-// Rcade game dimensions
-const WIDTH = 336;
-const HEIGHT = 262;
+const magicBall = document.getElementById("magicBall");
+const liquid = document.getElementById("liquid");
+const fortuneText = document.getElementById("fortuneText");
 
-const sketch = (p) => {
-    let x;
-    let y;
-    const speed = 4;
-    const ballSize = 20;
-    let gameStarted = false;
+const answers = [
+  "It is certain",
+  "It is<br>decidedly so",
+  "Without<br>a doubt",
+  "Yes, definitely",
+  "You may rely<br>on it",
+  "As I see it,<br>yes",
+  "Most likely",
+  "Outlook good",
+  "Yes",
+  "Signs point<br>to yes",
+  "Reply hazy,<br>try again",
+  "Ask again<br>later",
+  "Better not<br>tell you now",
+  "Cannot<br>predict now",
+  "Concentrate<br>& ask again",
+  "Don’t count<br>on it",
+  "My reply<br>is no",
+  "My sources<br>say no",
+  "Outlook not<br>so good",
+  "Very doubtful",
+];
 
-    p.setup = () => {
-        p.createCanvas(WIDTH, HEIGHT);
-        x = WIDTH / 2;
-        y = HEIGHT / 2;
-    };
+function createBubbles(count = 26) {
+  const radius = 75;
+  for (let i = 0; i < count; i++) {
+    const b = document.createElement("div");
+    b.classList.add("bubble");
 
-    p.draw = () => {
-        p.background(26, 26, 46);
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.random() * (radius - 20);
+    const x = radius + dist * Math.cos(angle);
 
-        if (!gameStarted) {
-            // Show start screen
-            p.fill(255);
-            p.textSize(18);
-            p.textAlign(p.CENTER, p.CENTER);
-            p.text("Press 1P START", WIDTH / 2, HEIGHT / 2);
-            p.textSize(12);
-            p.text("Use D-PAD to move", WIDTH / 2, HEIGHT / 2 + 30);
+    b.style.left = `${x - 5}px`;
+    b.style.animationDelay = `${Math.random() * 2.5}s`;
+    b.style.animationDuration = `${2.5 + Math.random() * 2}s`;
 
-            if (SYSTEM.ONE_PLAYER) {
-                gameStarted = true;
-            }
-            return;
-        }
+    liquid.appendChild(b);
+  }
+}
 
-        // Handle input from arcade controls
-        if (PLAYER_1.DPAD.up) {
-            y -= speed;
-        }
-        if (PLAYER_1.DPAD.down) {
-            y += speed;
-        }
-        if (PLAYER_1.DPAD.left) {
-            x -= speed;
-        }
-        if (PLAYER_1.DPAD.right) {
-            x += speed;
-        }
+function randomAnswer() {
+  const idx = Math.floor(Math.random() * answers.length);
+  return answers[idx];
+}
 
-        // Keep ball in bounds
-        x = p.constrain(x, ballSize / 2, WIDTH - ballSize / 2);
-        y = p.constrain(y, ballSize / 2, HEIGHT - ballSize / 2);
+function showFortune() {
+  // pick answer
+  fortuneText.innerHTML = randomAnswer();
 
-        // Draw ball (change color when A is pressed)
-        if (PLAYER_1.A) {
-            p.fill(255, 100, 100);
-        } else if (PLAYER_1.B) {
-            p.fill(100, 255, 100);
-        } else {
-            p.fill(100, 200, 255);
-        }
-        p.noStroke();
-        p.ellipse(x, y, ballSize, ballSize);
-    };
-};
+  // retrigger shake
+  magicBall.classList.remove("shake");
+  void magicBall.offsetWidth; // force reflow so animation restarts
+  magicBall.classList.add("shake");
 
-new p5(sketch, document.getElementById("sketch"));
+  // show triangle / hide 8
+  magicBall.classList.add("show-fortune");
+
+  // after 5 seconds, fade back to 8
+  setTimeout(() => {
+    magicBall.classList.remove("show-fortune");
+  }, 5000);
+}
+
+// magicBall.addEventListener("click", showFortune);
+on("press", (e) => {
+  //   console.log(e.button);
+  if (
+    e.button === "UP" ||
+    e.button === "DOWN" ||
+    e.button === "LEFT" ||
+    e.button === "RIGHT"
+  ) {
+    showFortune();
+  }
+});
+
+magicBall.addEventListener("animationend", (e) => {
+  if (e.animationName === "shake") {
+    magicBall.classList.remove("shake");
+  }
+});
+
+// init bubbles once
+createBubbles();

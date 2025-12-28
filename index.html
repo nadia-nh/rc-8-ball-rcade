@@ -7,7 +7,27 @@
         <link rel="stylesheet" href="./src/style.css" />
     </head>
     <body>
-        <main id="sketch"></main>
+        <main id="sketch">
+            <div class="magic-8-container">
+                <div class="magic-8-ball" id="magicBall">
+                  <div class="center-ring"></div>
+            
+                  <div class="liquid" id="liquid">
+                    <!-- bubbles will be injected here -->
+                  </div>
+            
+                  <div class="fortune-triangle">
+                    <div class="fortune-text" id="fortuneText">Ask a question</div>
+                  </div>
+            
+                  <div class="white-eight"></div>
+                  <div class="eight-number">8</div>
+                </div>
+            
+                <div class="shadow"></div>
+                <div class="hint">Shake the ball with joysticks</div>
+            </div>
+        </main>
         <script type="module" src="./src/sketch.js"></script>
     </body>
 </html>
