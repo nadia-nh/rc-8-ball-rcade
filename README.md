@@ -1,6 +1,12 @@
 # 8-ball
 
-8-ball
+<img width="640" height="480" alt="rcade-8-ball screenshot" src="screenshot-rc-8-ball.png" />
+
+A small game built at the [The Recurse Center](https://recurse.com) for the [RCade](https://rcade.recurse.com) by [Nadia Heredia](https://github.com/nadia-nh), and [Eliza Gilpin](https://github.com/elizathescheisse).
+
+Concentrate hard on your yes-no question and shake the joysticks to let the 8-ball reveal an answer.
+
+Original 8-ball prototype built by Eliza, ported to the RCade.
 
 ## About RCade
 
