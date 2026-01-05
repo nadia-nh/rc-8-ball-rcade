@@ -3,6 +3,7 @@ import { on } from "@rcade/plugin-input-classic";
 const magicBall = document.getElementById("magicBall");
 const liquid = document.getElementById("liquid");
 const fortuneText = document.getElementById("fortuneText");
+const defaultBubbleCount = 26;
 
 const answers = [
   "It is certain",
@@ -20,15 +21,15 @@ const answers = [
   "Better not<br>tell you now",
   "Cannot<br>predict now",
   "Concentrate<br>& ask again",
-  "Don’t count<br>on it",
+  "Don't count<br>on it",
   "My reply<br>is no",
   "My sources<br>say no",
   "Outlook not<br>so good",
   "Very doubtful",
 ];
 
-function createBubbles(count = 26) {
-  const radius = 75;
+function createBubbles(count = defaultBubbleCount) {
+  const radius = liquid.offsetWidth / 2;
   for (let i = 0; i < count; i++) {
     const b = document.createElement("div");
     b.classList.add("bubble");
@@ -45,39 +46,41 @@ function createBubbles(count = 26) {
   }
 }
 
-function randomAnswer() {
+function getRandomAnswer() {
   const idx = Math.floor(Math.random() * answers.length);
   return answers[idx];
 }
 
+// Pick and answer and show it
 function showFortune() {
-  // pick answer
-  fortuneText.innerHTML = randomAnswer();
+  fortuneShowing = true;
+  fortuneText.innerHTML = getRandomAnswer();
 
-  // retrigger shake
   magicBall.classList.remove("shake");
   void magicBall.offsetWidth; // force reflow so animation restarts
   magicBall.classList.add("shake");
 
-  // show triangle / hide 8
   magicBall.classList.add("show-fortune");
 
-  // after 5 seconds, fade back to 8
   setTimeout(() => {
     magicBall.classList.remove("show-fortune");
+    fortuneShowing = false;
   }, 5000);
 }
 
-// magicBall.addEventListener("click", showFortune);
+// Main input handler
+var fortuneShowing = false;
+
 on("press", (e) => {
-  //   console.log(e.button);
   if (
     e.button === "UP" ||
     e.button === "DOWN" ||
     e.button === "LEFT" ||
     e.button === "RIGHT"
   ) {
-    showFortune();
+    if (!fortuneShowing) {
+      showFortune();
+    }
   }
 });
 
@@ -87,5 +90,5 @@ magicBall.addEventListener("animationend", (e) => {
   }
 });
 
-// init bubbles once
+// Initialize bubbles
 createBubbles();
